@@ -215,12 +215,9 @@ If you just buffered a single feature, select another polygon layer as well.`,
         let intersectionSucceeded = false;
         for (const feature of polygonFeatures.slice(1)) {
           try {
-            const intersection_res_1 = turf.intersect(currentResult, feature);
-            const union = turf.union(feature, currentResult);
-            const xor = intersection_res_1 ? turf.difference(union, intersection_res_1) : union;
-            const intersectionResult = turf.intersect(currentResult, intersection_res_1);
+            const intersectionResult = turf.intersect(currentResult, feature);
             if (intersectionResult) {
-              currentResult = xor;
+              currentResult = intersectionResult;
               intersectionSucceeded = true;
             } else {
               addToLog('Intersection operation returned null for a pair of features (possibly non-overlapping or invalid geometry)', 'warning');
@@ -230,6 +227,8 @@ If you just buffered a single feature, select another polygon layer as well.`,
             addToLog(`Error during intersection: ${error}`, 'error');
           }
         }
+
+        
         if (intersectionSucceeded && currentResult) {
           // Return a single (multi)polygon feature if intersection succeeded
           result = [currentResult];
